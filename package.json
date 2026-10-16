@@ -1,0 +1,326 @@
+{
+  "name": "claude-quota-bar",
+  "displayName": "Claude Quota Bar",
+  "description": "A slim status bar meter for your Claude 5-hour session and weekly usage limits, with threshold colours, alerts, usage stats and token-saving tips.",
+  "version": "0.3.0",
+  "publisher": "tidal",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/engineering-tidal/claude-quota-bar.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "claude code",
+    "usage",
+    "quota",
+    "rate limit",
+    "status bar"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeQuota.toggleCollapsed",
+        "title": "Toggle Compact View",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.demo",
+        "title": "Play Demo",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.installBridge",
+        "title": "Connect to Claude Code",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.uninstallBridge",
+        "title": "Disconnect from Claude Code",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.testAlert",
+        "title": "Preview Alerts (visual + sound)",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.refresh",
+        "title": "Re-read Latest Usage",
+        "category": "Claude Quota"
+      },
+      {
+        "command": "claudeQuota.openSettings",
+        "title": "Open Settings",
+        "category": "Claude Quota"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Quota Bar",
+      "properties": {
+        "claudeQuota.session.warnAt": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "maximum": 100,
+          "markdownDescription": "**5-hour session**: turns **yellow** from this percent, and a *warning* alert can fire."
+        },
+        "claudeQuota.session.criticalAt": {
+          "type": "number",
+          "default": 90,
+          "minimum": 1,
+          "maximum": 100,
+          "markdownDescription": "**5-hour session**: turns **red** from this percent, and a *critical* alert can fire."
+        },
+        "claudeQuota.weekly.warnAt": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "maximum": 100,
+          "markdownDescription": "**Weekly**: turns **yellow** from this percent, and a *warning* alert can fire."
+        },
+        "claudeQuota.weekly.criticalAt": {
+          "type": "number",
+          "default": 90,
+          "minimum": 1,
+          "maximum": 100,
+          "markdownDescription": "**Weekly**: turns **red** from this percent, and a *critical* alert can fire."
+        },
+        "claudeQuota.colors.palette": {
+          "type": "string",
+          "enum": [
+            "subtle",
+            "vivid",
+            "pastel",
+            "neon",
+            "ocean",
+            "colorblind"
+          ],
+          "enumDescriptions": [
+            "Muted sage, sand and coral. Easy on the eyes.",
+            "GitHub-style green, amber and red.",
+            "Soft mint, peach and rose.",
+            "Bright green, yellow and pink. Loud.",
+            "Teal, saffron and terracotta.",
+            "Okabe-Ito sky blue, orange and vermillion, readable with red-green colour blindness."
+          ],
+          "default": "subtle",
+          "description": "Colour palette. The three colour settings below override single colours."
+        },
+        "claudeQuota.colors.ok": {
+          "type": "string",
+          "default": "",
+          "format": "color-hex",
+          "pattern": "^$|^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "patternErrorMessage": "Use #RGB or #RRGGBB, or leave empty for the palette's colour.",
+          "markdownDescription": "Override the palette's **green** (below the yellow threshold), as `#RRGGBB`. Empty uses the palette."
+        },
+        "claudeQuota.colors.warn": {
+          "type": "string",
+          "default": "",
+          "format": "color-hex",
+          "pattern": "^$|^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "patternErrorMessage": "Use #RGB or #RRGGBB, or leave empty for the palette's colour.",
+          "markdownDescription": "Override the palette's **yellow** (between the thresholds), as `#RRGGBB`. Empty uses the palette."
+        },
+        "claudeQuota.colors.critical": {
+          "type": "string",
+          "default": "",
+          "format": "color-hex",
+          "pattern": "^$|^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "patternErrorMessage": "Use #RGB or #RRGGBB, or leave empty for the palette's colour.",
+          "markdownDescription": "Override the palette's **red** (from the red threshold up), as `#RRGGBB`. Empty uses the palette."
+        },
+        "claudeQuota.colors.mode": {
+          "type": "string",
+          "enum": [
+            "bands",
+            "gradient"
+          ],
+          "enumDescriptions": [
+            "One flat colour per band.",
+            "Blends into the next colour over the 10 points before each threshold."
+          ],
+          "default": "bands",
+          "description": "How colours change with usage."
+        },
+        "claudeQuota.colors.background": {
+          "type": "string",
+          "enum": [
+            "none",
+            "critical",
+            "warnAndCritical"
+          ],
+          "enumDescriptions": [
+            "Coloured text only.",
+            "Also the theme's red background when red.",
+            "Also the theme's yellow and red backgrounds."
+          ],
+          "default": "none",
+          "description": "Whether to colour the item's background too (uses your theme's warning and error colours)."
+        },
+        "claudeQuota.display.collapsed": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Compact view: just `5h 19%  7d 38%`. Click the meter to switch between compact and full."
+        },
+        "claudeQuota.display.glyphs": {
+          "type": "string",
+          "enum": [
+            "blocks",
+            "dots",
+            "squares",
+            "diamonds",
+            "smooth"
+          ],
+          "enumDescriptions": [
+            "▰▱",
+            "●○",
+            "■□",
+            "◆◇",
+            "█▉▊▋▌▍▎▏░ (eighth-cell precision)"
+          ],
+          "default": "blocks",
+          "description": "Characters the meter and bar are drawn with."
+        },
+        "claudeQuota.display.text": {
+          "type": "string",
+          "enum": [
+            "timeAndPercent",
+            "time",
+            "percent"
+          ],
+          "enumDescriptions": [
+            "5h ▰▱▱▱▱ 19% 2h10m",
+            "5h ▰▱▱▱▱ 2h10m",
+            "5h ▰▱▱▱▱ 19%"
+          ],
+          "default": "timeAndPercent",
+          "description": "What the full view shows next to each bar."
+        },
+        "claudeQuota.display.barWidth": {
+          "type": "number",
+          "default": 5,
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Characters in each bar (full view). 0 hides the bar."
+        },
+        "claudeQuota.display.showWeekly": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the weekly limit."
+        },
+        "claudeQuota.display.alignment": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "default": "right",
+          "description": "Which side of the status bar to use."
+        },
+        "claudeQuota.animation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Master switch for animation. Also off when `workbench.reduceMotion` is `on`. Animation pauses while VS Code is in the background and only redraws what changed."
+        },
+        "claudeQuota.animation.sweep": {
+          "type": "boolean",
+          "default": true,
+          "description": "Animate the meter filling to a new reading."
+        },
+        "claudeQuota.animation.spinOnUpdate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Spin the icon briefly when a new reading arrives."
+        },
+        "claudeQuota.animation.pulse": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "warnAndCritical",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Gently breathe while red.",
+            "Breathe while yellow or red.",
+            "Never."
+          ],
+          "default": "critical",
+          "description": "Gentle breathing of the label's colour."
+        },
+        "claudeQuota.alerts.visual": {
+          "type": "string",
+          "enum": [
+            "warnAndCritical",
+            "criticalOnly",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Pop a notification and flash the item at the warning and the critical threshold.",
+            "Only at the critical threshold.",
+            "Never. The item still changes colour."
+          ],
+          "default": "warnAndCritical",
+          "description": "When to show a visual alert (notification + flashing meter) as usage crosses a threshold."
+        },
+        "claudeQuota.alerts.sound": {
+          "type": "string",
+          "enum": [
+            "warnAndCritical",
+            "criticalOnly",
+            "off"
+          ],
+          "default": "criticalOnly",
+          "description": "When to play the alert sound."
+        },
+        "claudeQuota.alerts.soundFile": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to a sound file. Empty uses a quiet system sound (`Glass` on macOS, `chimes.wav` on Windows, freedesktop `message` on Linux)."
+        },
+        "claudeQuota.alerts.volume": {
+          "type": "number",
+          "default": 0.35,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Alert volume from 0 to 1 (macOS only; other platforms play at system volume)."
+        },
+        "claudeQuota.staleAfterMinutes": {
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "markdownDescription": "Mark the reading as stale when Claude Code has not reported usage for this many minutes. Usage from claude.ai or other machines counts against the same limits but only shows up after your next Claude Code response."
+        },
+        "claudeQuota.statePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Where the bridge writes usage. Empty means `~/.claude/quota-bar/state.json`."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "test": "tsc -p . && node --test out/*.test.js",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/vscode": "~1.90.0",
+    "@vscode/vsce": "^3.6.0",
+    "typescript": "~5.9.3"
+  }
+}
