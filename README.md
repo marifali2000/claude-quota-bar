@@ -42,19 +42,27 @@ The extension helps in four ways:
 | A Claude Pro or Max plan | | Claude Code reports rate limits only for these plans |
 | VS Code | 1.90 or later | |
 | Claude Code | 2.1.300 or later | The chat panel plugin uses the mod API |
-| Node.js | 18 or later | To build the extension, and to run the terminal status line script |
+| Node.js | 18 or later | Only for the terminal status line script, or to build from source |
 
 ## Install
 
-The extension is not on the VS Code Marketplace. Build it from this repository:
+The extension is not on the VS Code Marketplace. Each
+[release](https://github.com/engineering-tidal/claude-quota-bar/releases) has a ready-to-install
+`.vsix` file, so there is nothing to build.
+
+With the GitHub CLI:
 
 ```bash
-gh repo clone engineering-tidal/claude-quota-bar
-cd claude-quota-bar
-npm install
-npm run package                                    # builds claude-quota-bar-0.3.0.vsix
-code --install-extension claude-quota-bar-0.3.0.vsix
+gh release download --repo engineering-tidal/claude-quota-bar --pattern '*.vsix' --clobber
+code --install-extension claude-quota-bar-*.vsix
 ```
+
+Or by hand: download the `.vsix` from the
+[latest release](https://github.com/engineering-tidal/claude-quota-bar/releases/latest). In
+VS Code, open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and
+pick the file.
+
+The repository is private, so either way you need to be signed in to GitHub with access to it.
 
 Then, in VS Code:
 
@@ -290,7 +298,14 @@ claude plugin validate mod/quota-bar
 claude plugin test mod/quota-bar
 ```
 
-To try a change, package and install it, then run **Developer: Reload Window**. When the
-extension starts, it copies a changed plugin or bridge over the installed ones. Bump
-`version` in both `package.json` and `mod/quota-bar/.claude-plugin/plugin.json` for a
-release.
+To try a change, package it, install it with `code --install-extension
+claude-quota-bar-<version>.vsix`, then run **Developer: Reload Window**. When the extension
+starts, it copies a changed plugin or bridge over the installed ones.
+
+To release:
+
+1. Bump `version` in both `package.json` and `mod/quota-bar/.claude-plugin/plugin.json`.
+2. Commit, then tag the commit `v<version>` and push the tag.
+3. Build the `.vsix` from a clean clone of the tag (`npm ci && npm test && npm run package`),
+   so the file matches the repository exactly.
+4. Run `gh release create v<version> claude-quota-bar-<version>.vsix`.
