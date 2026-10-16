@@ -1,8 +1,48 @@
 # Claude Quota Bar
 
 A VS Code extension that shows your Claude **5-hour session** and **weekly** usage limits in
-the status bar. It warns you before you hit either limit and suggests ways to use fewer
-tokens.
+the status bar. It warns you before you hit either one and suggests ways to use fewer tokens.
+
+## Install (no build needed)
+
+You need a Claude Pro or Max plan (Claude Code reports usage limits only for these), VS Code
+1.90 or later, and Claude Code 2.1.300 or later.
+
+**1. Get the extension.** Each [release](https://github.com/engineering-tidal/claude-quota-bar/releases)
+has a ready-to-install `.vsix` file. With the GitHub CLI:
+
+```bash
+gh release download --repo engineering-tidal/claude-quota-bar --pattern '*.vsix' --clobber
+code --install-extension claude-quota-bar-*.vsix
+```
+
+Or download the `.vsix` from the
+[latest release](https://github.com/engineering-tidal/claude-quota-bar/releases/latest). In
+VS Code, open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and
+pick the file. The repository is private, so either way you need to be signed in to GitHub
+with access to it.
+
+**2. Reload VS Code.** Run **Developer: Reload Window** from the command palette.
+
+**3. Connect it to Claude Code.** Run **Claude Quota: Connect to Claude Code**. It asks
+before it makes two changes to `~/.claude/settings.json`, and saves a backup as
+`settings.json.bak-quota-bar` first:
+
+- It adds `~/.claude/quota-bar/mod` to `env.CLAUDE_CODE_PLUGIN_DIRS`. This loads the plugin
+  that reports usage from the VS Code chat panel, and the skill that lets Claude change the
+  settings.
+- It sets `statusLine` to the bridge script, which reports usage from the terminal CLI and
+  runs with Node.js 18 or later. If you already have a status line, it is kept and still
+  prints.
+
+**4. Start a new Claude chat** and send a message. The meter fills in after the reply. Chats
+that were already open don't load the plugin.
+
+To see how it works before any data arrives, run **Claude Quota: Play Demo**. To remove it,
+run **Claude Quota: Disconnect from Claude Code**, which undoes both settings changes, then
+uninstall the extension. To build from source instead, see [Develop](#develop).
+
+## What it looks like
 
 ```
 full view     5h ▰▰▰▱▱ 64% 1h40m   7d ▰▰▱▱▱ 38% 3d1h
@@ -34,54 +74,6 @@ The extension helps in four ways:
   conversations visible.
 - **Your account stays private.** No network calls, no API keys, no reading of login tokens.
   It uses only the figures Claude Code already gives its plugins and status line.
-
-## Requirements
-
-| Need | Version | Why |
-|---|---|---|
-| A Claude Pro or Max plan | | Claude Code reports rate limits only for these plans |
-| VS Code | 1.90 or later | |
-| Claude Code | 2.1.300 or later | The chat panel plugin uses the mod API |
-| Node.js | 18 or later | Only for the terminal status line script, or to build from source |
-
-## Install
-
-The extension is not on the VS Code Marketplace. Each
-[release](https://github.com/engineering-tidal/claude-quota-bar/releases) has a ready-to-install
-`.vsix` file, so there is nothing to build.
-
-With the GitHub CLI:
-
-```bash
-gh release download --repo engineering-tidal/claude-quota-bar --pattern '*.vsix' --clobber
-code --install-extension claude-quota-bar-*.vsix
-```
-
-Or by hand: download the `.vsix` from the
-[latest release](https://github.com/engineering-tidal/claude-quota-bar/releases/latest). In
-VS Code, open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and
-pick the file.
-
-The repository is private, so either way you need to be signed in to GitHub with access to it.
-
-Then, in VS Code:
-
-1. Run **Developer: Reload Window**.
-2. Run **Claude Quota: Connect to Claude Code** from the command palette. It asks before it
-   makes two changes to `~/.claude/settings.json`, and saves a backup as
-   `settings.json.bak-quota-bar` first:
-   - It adds `~/.claude/quota-bar/mod` to `env.CLAUDE_CODE_PLUGIN_DIRS`. This loads the
-     plugin that reports usage from the VS Code chat panel, and the skill that lets Claude
-     change the settings.
-   - It sets `statusLine` to the bridge script, which reports usage from the terminal CLI. If
-     you already have a status line, it is kept and still prints.
-3. Start a **new** Claude chat and send a message. The meter fills in after the reply. Chats
-   that were already open don't load the plugin.
-
-To try it before any data arrives, run **Claude Quota: Play Demo**.
-
-To remove it, run **Claude Quota: Disconnect from Claude Code**, which undoes both settings
-changes, then uninstall the extension.
 
 ## Use it
 
