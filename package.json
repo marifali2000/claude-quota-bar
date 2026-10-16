@@ -2,12 +2,12 @@
   "name": "claude-quota-bar",
   "displayName": "Claude Quota Bar",
   "description": "A slim status bar meter for your Claude 5-hour session and weekly usage limits, with threshold colours, alerts, usage stats and token-saving tips.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "tidal",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/engineering-tidal/claude-quota-bar.git"
+    "url": "https://github.com/marifali2000/claude-quota-bar.git"
   },
   "engines": {
     "vscode": "^1.90.0"

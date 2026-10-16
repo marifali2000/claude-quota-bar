@@ -1,6 +1,6 @@
 {
   "name": "quota-bar",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Saves your 5-hour and weekly Claude usage to ~/.claude/quota-bar/state.json for the Claude Quota Bar VS Code extension.",
   "author": {
     "name": "M Arif Ali"

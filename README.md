@@ -3,24 +3,25 @@
 A VS Code extension that shows your Claude **5-hour session** and **weekly** usage limits in
 the status bar. It warns you before you hit either one and suggests ways to use fewer tokens.
 
+📖 [Read the story behind it](article/claude-quota-bar.md)
+
 ## Install (no build needed)
 
 You need a Claude Pro or Max plan (Claude Code reports usage limits only for these), VS Code
 1.90 or later, and Claude Code 2.1.300 or later.
 
-**1. Get the extension.** Each [release](https://github.com/engineering-tidal/claude-quota-bar/releases)
-has a ready-to-install `.vsix` file. With the GitHub CLI:
+**1. Get the extension.** Each [release](https://github.com/marifali2000/claude-quota-bar/releases)
+has a ready-to-install `.vsix` file:
 
 ```bash
-gh release download --repo engineering-tidal/claude-quota-bar --pattern '*.vsix' --clobber
-code --install-extension claude-quota-bar-*.vsix
+curl -LO https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix
+code --install-extension claude-quota-bar.vsix
 ```
 
-Or download the `.vsix` from the
-[latest release](https://github.com/engineering-tidal/claude-quota-bar/releases/latest). In
-VS Code, open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and
-pick the file. The repository is private, so either way you need to be signed in to GitHub
-with access to it.
+Or download `claude-quota-bar.vsix` from the
+[latest release](https://github.com/marifali2000/claude-quota-bar/releases/latest). In VS Code,
+open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and pick the
+file.
 
 **2. Reload VS Code.** Run **Developer: Reload Window** from the command palette.
 
@@ -300,4 +301,6 @@ To release:
 2. Commit, then tag the commit `v<version>` and push the tag.
 3. Build the `.vsix` from a clean clone of the tag (`npm ci && npm test && npm run package`),
    so the file matches the repository exactly.
-4. Run `gh release create v<version> claude-quota-bar-<version>.vsix`.
+4. Run `gh release create v<version> claude-quota-bar-<version>.vsix`, and upload a copy named
+   `claude-quota-bar.vsix` too. The install command downloads that unversioned name from the
+   latest release, so it keeps working across versions.
