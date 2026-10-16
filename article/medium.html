@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Kept Hitting My Claude Limit Mid-Task. So I Put It in My Status Bar.</title>
+<meta name="description" content="A tiny VS Code extension that shows your 5-hour and weekly Claude usage, warns you before you run out, and coaches you to spend fewer tokens.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I Kept Hitting My Claude Limit Mid-Task. So I Put It in My Status Bar.">
+<meta property="og:description" content="A tiny VS Code extension that shows your 5-hour and weekly Claude usage, warns you before you run out, and coaches you to spend fewer tokens.">
+<meta property="og:image" content="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/cover.png">
+<meta property="og:url" content="https://marifali2000.github.io/claude-quota-bar/article/medium.html">
+<meta name="author" content="M Arif Ali">
+<style>
+  body { max-width: 700px; margin: 40px auto; padding: 0 16px; font: 20px/1.6 Georgia, serif; color: #242424; background: #fff; }
+  h1, h2, h3 { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.25; }
+  h1 { font-size: 40px; margin-bottom: 8px; } h3 { color: #6b6b6b; font-weight: 400; margin-top: 0; }
+  figure { margin: 32px 0; } img { width: 100%; border-radius: 4px; }
+  figcaption { text-align: center; font-size: 14px; color: #6b6b6b; margin-top: 8px; }
+  pre { background: #f2f2f2; padding: 16px; overflow-x: auto; font-size: 15px; }
+  code { font-size: 0.85em; background: #f2f2f2; padding: 1px 4px; } pre code { padding: 0; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<article>
+<h1>I Kept Hitting My Claude Limit Mid-Task. So I Put It in My Status Bar.</h1>
+<h3>A tiny VS Code extension that shows your 5-hour and weekly Claude usage, warns you before you run out, and coaches you to spend fewer tokens.</h3>
+<figure><img src="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/cover.png" alt="Claude Quota Bar: never hit your Claude limit by surprise"></figure>
+<p>It always happens at the worst moment. I&#39;m three files into a refactor, Claude is halfway through a migration, and the limit hits. Back in two hours.</p>
+<p>Claude&#39;s Pro and Max plans meter usage in two rolling windows: a <strong>5-hour session</strong> and a <strong>week</strong>. When either runs out, you wait. Claude Code will tell you where you stand, but only if you stop and type <code>/usage</code>. Nobody does that mid-flow.</p>
+<p>So I built <strong>Claude Quota Bar</strong>: both limits, always visible, right where I already look.</p>
+<h2>Two numbers, always in view</h2>
+<figure><img src="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/views.png" alt="The full and compact views in the VS Code status bar"><figcaption>The full view shows usage and time to reset for both limits. Click it for the compact view.</figcaption></figure>
+<p><code>5h ▰▰▰▱▱ 64% 1h40m</code> means 64% of the 5-hour window is used, and it resets in 1 hour 40 minutes. The <code>7d</code> item does the same for the week.</p>
+<p>Colour does the rest:</p>
+<ul>
+<li><strong>Green</strong> below 60%: carry on.</li>
+<li><strong>Yellow</strong> from 60%: pace yourself.</li>
+<li><strong>Red</strong> from 90%: wrap up.</li>
+</ul>
+<p>You set both thresholds, separately for each window. A small 🔥 appears when your current pace will run out before the reset. That&#39;s the signal I wished I&#39;d had all along.</p>
+<h2>A warning you can&#39;t miss</h2>
+<figure><img src="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/states.png" alt="Green, yellow and red states, and the alert"><figcaption>Crossing a threshold flashes the meter and tells you how long you have left.</figcaption></figure>
+<p>Each threshold fires once per window, and only once across all your VS Code windows. At red, a quiet chime plays too. All of it can be configured, including turning it off.</p>
+<h2>The hover is a coach, not a dashboard</h2>
+<figure><img src="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/hover.png" alt="The hover: pace, burn rate, room left and a tip"><figcaption>Hover for pace, burn rate, room left and a tip that fits the moment.</figcaption></figure>
+<p>Hovering answers the questions I actually have:</p>
+<ul>
+<li><strong>Pace:</strong> am I ahead of or behind an even spend?</li>
+<li><strong>Burn:</strong> how fast am I using it, this hour and on average?</li>
+<li><strong>Room:</strong> how much can I use per hour, or per day, and still last until the reset?</li>
+<li><strong>Outlook:</strong> will this pace last?</li>
+</ul>
+<p>It also shows the last conversation&#39;s context fill and estimated cost, plus a tip. When the context is 67% full, the tip says so and suggests <code>/compact</code>. When the week runs hot, it suggests saving Opus for the hard problems.</p>
+<h2>Five habits that stretch your limits</h2>
+<p>These are among the tips the extension rotates through. They work with or without it.</p>
+<ol>
+<li><strong><code>/clear</code> between unrelated tasks.</strong> Every message resends the whole conversation, so a fresh start makes each reply cheaper.</li>
+<li><strong><code>/compact</code> long conversations</strong>, ideally with a focus: <code>/compact keep the API decisions</code>.</li>
+<li><strong>Match the model to the job.</strong> Use Sonnet or Haiku for routine edits and tests, and save Opus for the hard problems.</li>
+<li><strong>Point, don&#39;t search.</strong> <code>@src/billing/refunds.ts</code> costs far less than &quot;find where we handle refunds&quot;.</li>
+<li><strong>Keep CLAUDE.md lean and unused MCP servers off.</strong> Both ride along on every request.</li>
+</ol>
+<h2>Change settings by asking Claude</h2>
+<p>The extension ships with a Claude Code skill, so you never need the settings page. Just ask:</p>
+<pre><code>make the quota bar red from 85% and yellow from 50%
+use the colour-blind palette and turn the pulse off
+how much of my weekly limit have I used?
+</code></pre>
+<p>Claude edits your VS Code settings, and the meter updates instantly.</p>
+<h2>How it works: no network, no tokens</h2>
+<figure><img src="https://raw.githubusercontent.com/marifali2000/claude-quota-bar/main/article/images/architecture.png" alt="Claude Code writes the numbers to a file; the extension watches it"><figcaption>Claude Code already knows your limits. The extension just listens.</figcaption></figure>
+<p>Claude Code receives your rate-limit figures with every reply. A small plugin hook (for the VS Code chat panel) and a status line script (for the terminal) save them to a JSON file in <code>~/.claude</code>. The extension watches that file.</p>
+<p>There are no API keys, no login tokens, and no calls home. The trade-off is that the numbers update when Claude replies, so usage elsewhere, such as claude.ai or another machine, shows up after your next message.</p>
+<p>One lesson worth sharing: <strong>the VS Code chat panel never runs Claude Code&#39;s status line command.</strong> I watched it through an hour of replies. Plugin hooks do run there, which is why the extension carries both paths.</p>
+<p>It&#39;s light, too. Animation runs only while something moves and pauses when VS Code is in the background, and each frame sends only what changed.</p>
+<h2>Try it in two minutes</h2>
+<p>You need a Claude Pro or Max plan, VS Code 1.90 or later, and Claude Code 2.1.300 or later.</p>
+<pre><code>curl -LO https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix
+code --install-extension claude-quota-bar.vsix
+</code></pre>
+<p>Then, in VS Code:</p>
+<ol>
+<li>Run <strong>Claude Quota: Connect to Claude Code</strong>.</li>
+<li>Start a new Claude chat.</li>
+<li>Run <strong>Claude Quota: Play Demo</strong> to see the whole thing in ten seconds.</li>
+</ol>
+<p>The code is open on GitHub at <a href="https://github.com/marifali2000/claude-quota-bar">github.com/marifali2000/claude-quota-bar</a>. Issues and pull requests are welcome.</p>
+<hr>
+<p><em>If this saves you one &quot;limit reached&quot; moment, give it a clap, and pass it to the teammate who keeps asking whether Claude is down.</em></p>
+</article>
+</body>
+</html>

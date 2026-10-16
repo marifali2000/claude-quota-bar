@@ -315,12 +315,14 @@
     "watch": "tsc -watch -p .",
     "test": "tsc -p . && node --test out/*.test.js",
     "package": "vsce package --no-dependencies",
-    "vscode:prepublish": "npm run compile"
+    "vscode:prepublish": "npm run compile",
+    "article": "node article/build-medium.js"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
     "@types/vscode": "~1.90.0",
     "@vscode/vsce": "^3.6.0",
+    "marked": "^12.0.2",
     "typescript": "~5.9.3"
   }
 }

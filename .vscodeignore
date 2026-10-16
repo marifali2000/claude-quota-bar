@@ -7,3 +7,4 @@ tsconfig.json
 *.vsix
 mod/**/*.test.ts
 article/**
+.nojekyll
