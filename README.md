@@ -11,17 +11,64 @@ You need a Claude Pro or Max plan (Claude Code reports usage limits only for the
 1.90 or later, and Claude Code 2.1.300 or later.
 
 **1. Get the extension.** Each [release](https://github.com/marifali2000/claude-quota-bar/releases)
-has a ready-to-install `.vsix` file:
+has a ready-to-install `.vsix` file. Download and install it with the commands for your system.
+
+**macOS** (Terminal)
 
 ```bash
 curl -LO https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix
 code --install-extension claude-quota-bar.vsix
 ```
 
-Or download `claude-quota-bar.vsix` from the
+If you get `command not found: code`, macOS doesn't have VS Code's command on your PATH yet.
+Run VS Code's own copy instead:
+
+```bash
+"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension claude-quota-bar.vsix
+```
+
+To fix it for good, press **⌘⇧P** in VS Code, run **Shell Command: Install 'code' command in
+PATH**, and open a new terminal.
+
+**Linux** (Terminal)
+
+```bash
+curl -LO https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix
+code --install-extension claude-quota-bar.vsix
+```
+
+Without `curl`, download with
+`wget https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix`.
+The `.deb`, `.rpm` and Snap installs of VS Code put `code` on your PATH. For the Flatpak install,
+use:
+
+```bash
+flatpak run com.visualstudio.code --install-extension claude-quota-bar.vsix
+```
+
+**Windows** (PowerShell)
+
+```powershell
+curl.exe -LO https://github.com/marifali2000/claude-quota-bar/releases/latest/download/claude-quota-bar.vsix
+code --install-extension claude-quota-bar.vsix
+```
+
+Type `curl.exe`, not `curl`: in Windows PowerShell, `curl` runs a different command that doesn't
+accept these options. If `code` isn't recognised, VS Code was installed without **Add to PATH**.
+Use its full path:
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\Microsoft VS Code\bin\code.cmd" --install-extension claude-quota-bar.vsix
+```
+
+For a machine-wide install, the path is `C:\Program Files\Microsoft VS Code\bin\code.cmd`.
+
+**Any system, without a terminal:** download `claude-quota-bar.vsix` from the
 [latest release](https://github.com/marifali2000/claude-quota-bar/releases/latest). In VS Code,
 open the Extensions view, click **⋯** at the top, choose **Install from VSIX…** and pick the
 file.
+
+VS Code Insiders uses `code-insiders` in place of `code` in all of the commands above.
 
 **2. Reload VS Code.** Run **Developer: Reload Window** from the command palette.
 
